@@ -4,6 +4,7 @@ import android.view.WindowInsetsAnimation
 import com.dica.m4l2.domain.contract.AccountContract
 import com.dica.m4l2.data.api.ApiClient
 import com.dica.m4l2.data.model.Account
+import com.dica.m4l2.data.model.PatchAccountStatusDTO
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -77,5 +78,23 @@ class AccountPresenter(private val view: AccountContract.View) : AccountContract
                 view.showError("Ошибка сети: ${t.message}")
             }
         })
+    }
+
+    override fun updateAccountStatus(accountId: String, isActive: Boolean) {
+        ApiClient.accountApi.patchAccountsStatus(accountId, PatchAccountStatusDTO(isActive))
+            .enqueue(object : Callback<Account> {
+                override fun onResponse(call: Call<Account>, response: Response<Account>) {
+                    if (response.isSuccessful) {
+                        view.showSuccess("Успешно cтатус счета")
+                        loadAccounts()
+                    } else {
+                        view.showError("Ошибка")
+                    }
+                }
+
+                override fun onFailure(call: Call<Account>, t: Throwable) {
+                    view.showError("Ошибка сети: ${t.message}")
+                }
+            })
     }
 }

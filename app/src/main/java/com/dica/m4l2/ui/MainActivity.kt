@@ -17,7 +17,6 @@ import com.dica.m4l2.databinding.ActivityMainBinding
 import com.dica.m4l2.domain.contract.AccountContract
 import com.dica.m4l2.domain.presenter.AccountPresenter
 
-
 class MainActivity : AppCompatActivity(), AccountContract.View {
     lateinit var binding: ActivityMainBinding
     private lateinit var presenter: AccountContract.Presenter
@@ -34,7 +33,6 @@ class MainActivity : AppCompatActivity(), AccountContract.View {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         presenter = AccountPresenter(this)
         presenter.loadAccounts()
 
@@ -43,7 +41,12 @@ class MainActivity : AppCompatActivity(), AccountContract.View {
             presenter.deleteAccount(id)
         }, onChange = { account->
             showEditDialog(account)
-        })
+        },
+            onStatusToggle = {id,isChecked->
+                presenter.updateAccountStatus(id,isChecked)
+            }
+        )
+
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter

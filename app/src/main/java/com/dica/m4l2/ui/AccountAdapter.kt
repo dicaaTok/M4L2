@@ -1,14 +1,19 @@
 package com.dica.m4l2.ui
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.dica.m4l2.R
 import com.dica.m4l2.data.model.Account
 import com.dica.m4l2.databinding.ItemBinding
+import retrofit2.http.DELETE
+
 
 class AccountAdapter(
     val onDELETE: (String) -> Unit,
-    val onChange: (Account) -> Unit
+    val onChange: (Account) -> Unit,
+    val onStatusToggle: (String, Boolean) -> Unit
 ) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
     inner class AccountViewHolder(private val binding: ItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -23,6 +28,14 @@ class AccountAdapter(
             binding.btnChange.setOnClickListener({
                 onChange(item)
             })
+            binding.swhActive.setOnCheckedChangeListener(null)
+            binding.swhActive.isChecked=item.isActive
+            binding.swhActive.setOnCheckedChangeListener { buttonView,isChecked->
+                item.id?.let {
+                    onStatusToggle(it,isChecked)
+                }
+            }
+
         }
     }
 
